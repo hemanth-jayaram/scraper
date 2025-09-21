@@ -60,18 +60,124 @@ The **Ultimate Scraper V2 Web Interface** is a **completely self-contained** Fla
 
 ## 1. Environment Variables and Configuration
 
-### 1.1 Core Configuration Files That Need Updates
+### 1.1 🎯 **COMPLETE CODE CHANGE GUIDE**
 
-| **File Path** | **Line Numbers** | **Configuration Type** | **Current Value** | **Action Required** |
-|---------------|------------------|------------------------|-------------------|---------------------|
-| `web_server.py` | Lines 30-32 | EC2 Instance Details | `EC2_HOST = "54.82.140.246"` | **CHANGE** to your EC2 IP |
-| `web_server.py` | Line 32 | SSH Key Path | `r"C:\Users\heman\Downloads\key-scraper.pem"` | **CHANGE** to your key path |
-| `web_server.py` | Line 37 | S3 Bucket Name | `S3_BUCKET_NAME = 'bockscraper'` | **CHANGE** to your bucket |
-| `.env` | Lines 7-8 | S3 Configuration | `S3_BUCKET_NAME=bockscraper` | **CHANGE** to your bucket |
-| `.env` | Line 13-14 | AWS Credentials | `# AWS_ACCESS_KEY_ID=...` | **UNCOMMENT** and add credentials |
-| `launch_scraper_interface.bat` | Line 66 | EC2 IP for Testing | `54.82.140.246` | **CHANGE** to your EC2 IP |
+**This section provides EXACT locations in the code where deployment teams need to make changes for different EC2 instances and S3 buckets.**
 
-### 1.2 Required Configuration Changes
+---
+
+#### **📁 FILE: `web_server.py` - Main Flask Backend**
+
+**🔧 EC2 Configuration (Lines 30-34):**
+```python
+# CURRENT CODE (Lines 30-34):
+EC2_HOST = "54.82.140.246"                                    # ⚠️ CHANGE THIS
+EC2_USER = "ec2-user" 
+EC2_KEY_PATH = r"C:\Users\heman\Downloads\key-scraper.pem"    # ⚠️ CHANGE THIS
+EC2_SCRAPER_PATH = "/home/ec2-user/ultimate_scraper_v2.py"    # ✅ Keep as-is
+EC2_ENV_PATH = "/home/ec2-user/ultimate_scraper_env/bin/activate" # ✅ Keep as-is
+
+# EXAMPLE CHANGE FOR NEW EC2:
+EC2_HOST = "18.234.567.890"                                   # 👈 Your new EC2 IP
+EC2_USER = "ec2-user" 
+EC2_KEY_PATH = r"C:\path\to\your\new-key.pem"                # 👈 Your new key file
+```
+
+**🔧 S3 Configuration (Line 37):**
+```python
+# CURRENT CODE (Line 37):
+S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME', 'bockscraper')  # ⚠️ Default bucket name
+
+# EXAMPLE CHANGE FOR NEW S3 BUCKET:
+S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME', 'my-new-bucket') # 👈 Your new bucket
+```
+
+---
+
+#### **📁 FILE: `.env` - Environment Variables**
+
+**🔧 S3 Bucket Configuration (Line 7):**
+```bash
+# CURRENT CODE (Line 7):
+S3_BUCKET_NAME=bockscraper                                    # ⚠️ CHANGE THIS
+
+# EXAMPLE CHANGE:
+S3_BUCKET_NAME=my-new-production-bucket                      # 👈 Your bucket name
+```
+
+**🔧 AWS Credentials (Lines 13-18):**
+```bash
+# CURRENT CODE (Lines 13-18):
+# AWS_ACCESS_KEY_ID=your_access_key_here                     # ⚠️ UNCOMMENT & CHANGE
+# AWS_SECRET_ACCESS_KEY=your_secret_key_here                 # ⚠️ UNCOMMENT & CHANGE
+# AWS_DEFAULT_REGION=us-east-1                               # ⚠️ UNCOMMENT & CHANGE
+
+# EXAMPLE CHANGE:
+AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE                       # 👈 Your access key
+AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY # 👈 Your secret
+AWS_DEFAULT_REGION=us-west-2                                 # 👈 Your region
+```
+
+---
+
+#### **📁 FILE: `launch_scraper_interface.bat` - Windows Launcher**
+
+**🔧 EC2 Connection Test (Line 66):**
+```batch
+REM CURRENT CODE (Line 66):
+echo Checking connection to 54.82.140.246...                # ⚠️ CHANGE THIS IP
+
+REM EXAMPLE CHANGE:
+echo Checking connection to 18.234.567.890...               # 👈 Your new EC2 IP
+```
+
+---
+
+### 1.2 📋 **QUICK REFERENCE TABLE**
+
+| **File** | **Lines** | **What to Change** | **Example** |
+|----------|-----------|-------------------|-------------|
+| `web_server.py` | 30 | EC2 IP Address | `"18.234.567.890"` |
+| `web_server.py` | 32 | SSH Key Path | `r"C:\keys\prod-key.pem"` |
+| `web_server.py` | 37 | Default S3 Bucket | `'my-prod-bucket'` |
+| `.env` | 7 | S3 Bucket Name | `S3_BUCKET_NAME=my-prod-bucket` |
+| `.env` | 13-15 | AWS Credentials | Uncomment and add real values |
+| `launch_scraper_interface.bat` | 66 | EC2 IP for testing | Your production IP |
+
+---
+
+### 1.3 🚨 **CRITICAL: Deployment Team Instructions**
+
+**🎯 EXACTLY what deployment teams need to change for different environments:**
+
+#### **Scenario A: Switching to New EC2 Instance**
+**Files to Edit: 2 files**
+
+1. **File**: `web_server.py` 
+   - **Line 30**: Change `EC2_HOST = "54.82.140.246"` to your new IP
+   - **Line 32**: Change `EC2_KEY_PATH = r"C:\Users\heman\Downloads\key-scraper.pem"` to your new key path
+
+2. **File**: `launch_scraper_interface.bat`
+   - **Line 66**: Change `54.82.140.246` to your new EC2 IP
+
+#### **Scenario B: Switching to New S3 Bucket**
+**Files to Edit: 2 files**
+
+1. **File**: `.env`
+   - **Line 7**: Change `S3_BUCKET_NAME=bockscraper` to your new bucket name
+
+2. **File**: `web_server.py` (Optional)
+   - **Line 37**: Change default bucket name in fallback
+
+#### **Scenario C: New AWS Account/Credentials**
+**Files to Edit: 1 file**
+
+1. **File**: `.env`
+   - **Lines 13-15**: Uncomment and add your AWS credentials
+
+---
+
+### 1.4 Required Configuration Changes
 
 #### **A. Update Web Server Configuration (`web_server.py`)**
 
@@ -753,11 +859,76 @@ EC2 Instance (~/):
 
 The system is designed to be **simple and reliable** - update the configuration files, set up S3 access, upload one file to EC2, and launch!
 
-## 6. Changing EC2 Instance or S3 Bucket
+---
 
-### 6.1 Changing EC2 Instance
+## 🎯 **DEPLOYMENT TEAM QUICK REFERENCE**
 
-If you need to switch to a different EC2 instance:
+### **📋 Complete Checklist: What Files to Change**
+
+#### **For EC2 Instance Changes:**
+- [ ] **File**: `web_server.py` **Line 30**: Update `EC2_HOST = "YOUR_NEW_IP"`
+- [ ] **File**: `web_server.py` **Line 32**: Update `EC2_KEY_PATH = r"C:\path\to\new-key.pem"`
+- [ ] **File**: `launch_scraper_interface.bat` **Line 66**: Update IP in connection test
+
+#### **For S3 Bucket Changes:**
+- [ ] **File**: `.env` **Line 7**: Update `S3_BUCKET_NAME=your-new-bucket`
+- [ ] **File**: `web_server.py` **Line 37**: (Optional) Update default bucket name
+
+#### **For AWS Credentials Changes:**
+- [ ] **File**: `.env` **Lines 13-15**: Uncomment and add credentials
+
+### **🔍 Exact Search Terms for Code Editors**
+
+**When using Find/Replace in your code editor:**
+
+| **What to Find** | **Replace With** | **File** |
+|------------------|------------------|----------|
+| `EC2_HOST = "54.82.140.246"` | `EC2_HOST = "YOUR_NEW_IP"` | `web_server.py` |
+| `EC2_KEY_PATH = r"C:\Users\heman\Downloads\key-scraper.pem"` | `EC2_KEY_PATH = r"C:\path\to\your-key.pem"` | `web_server.py` |
+| `S3_BUCKET_NAME=bockscraper` | `S3_BUCKET_NAME=your-bucket` | `.env` |
+| `echo Checking connection to 54.82.140.246...` | `echo Checking connection to YOUR_NEW_IP...` | `launch_scraper_interface.bat` |
+
+### **⚠️ Critical Notes for Deployment Teams**
+
+1. **Always update BOTH files for EC2 changes** (`web_server.py` and `launch_scraper_interface.bat`)
+2. **Test connections** after each change using the web interface
+3. **Keep backup copies** of configuration files before making changes
+4. **Use absolute paths** for SSH key files (avoid relative paths)
+5. **Ensure EC2 security groups** allow SSH access from your IP
+
+## 6. 🔄 **STEP-BY-STEP: Changing EC2 Instance or S3 Bucket**
+
+**This section provides detailed, file-by-file instructions for deployment teams to change infrastructure.**
+
+---
+
+### 6.1 🖥️ **Changing EC2 Instance - Complete Code Changes**
+
+**When switching to a different EC2 instance, you need to update 3 files:**
+
+#### **Step 1: Update `web_server.py` (Lines 30-32)**
+```python
+# FIND THIS CODE (Lines 30-32):
+EC2_HOST = "54.82.140.246"                                    # ⚠️ CHANGE THIS LINE
+EC2_USER = "ec2-user"                                         # ✅ Usually keep as-is
+EC2_KEY_PATH = r"C:\Users\heman\Downloads\key-scraper.pem"    # ⚠️ CHANGE THIS LINE
+
+# REPLACE WITH YOUR VALUES:
+EC2_HOST = "YOUR_NEW_EC2_IP_HERE"                             # 👈 New EC2 public IP
+EC2_USER = "ec2-user"                                         # ✅ Keep same user
+EC2_KEY_PATH = r"C:\path\to\your\new-ec2-key.pem"           # 👈 New key file path
+```
+
+#### **Step 2: Update `launch_scraper_interface.bat` (Line 66)**
+```batch
+REM FIND THIS LINE (Line 66):
+echo Checking connection to 54.82.140.246...                # ⚠️ CHANGE THIS
+
+REM REPLACE WITH:
+echo Checking connection to YOUR_NEW_EC2_IP_HERE...         # 👈 Same IP as above
+```
+
+#### **Step 3: Setup New EC2 Instance**
 
 #### **Step 1: Update Configuration Files**
 ```bash
