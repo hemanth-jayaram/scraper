@@ -1,0 +1,34 @@
+# Virtual Environment
+web_venv/
+venv/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Output Directories
+articles_output/
+test_output/
+
+# Sensitive Files (users should create their own)
+.env.local
+.env.production
+
+# Temporary Files
+*.tmp
+*.temp

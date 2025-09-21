@@ -1,0 +1,16 @@
+# Ultimate Scraper V2 - Web Interface Requirements
+# Flask web server dependencies for the beautiful scraping interface
+
+# Core web framework
+Flask>=2.3.0
+flask-cors>=4.0.0
+
+# SSH and file transfer for EC2 communication
+paramiko>=3.3.0
+
+# AWS S3 integration
+boto3>=1.28.0
+botocore>=1.31.0
+
+# Additional utilities
+pathlib2>=2.3.0
